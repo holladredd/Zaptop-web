@@ -4,7 +4,74 @@
 
 @layer base {
   body {
-    background-color: #F8FAFC;
-    color: #111827;
+    @apply bg-slate-50 text-slate-900 antialiased;
+  }
+  
+  .dark body {
+    @apply bg-slate-900 text-slate-100;
+  }
+}
+
+@layer components {
+  /* Card styles */
+  .card {
+    @apply bg-white rounded-xl shadow-card;
+  }
+  .dark .card {
+    @apply bg-slate-800 border border-slate-700 shadow-none;
+  }
+
+  /* Text colors */
+  .text-default {
+    @apply text-slate-800;
+  }
+  .dark .text-default {
+    @apply text-slate-100;
+  }
+
+  .text-muted {
+    @apply text-slate-500;
+  }
+  .dark .text-muted {
+    @apply text-slate-400;
+  }
+
+  /* Background colors */
+  .bg-default {
+    @apply bg-slate-50;
+  }
+  .dark .bg-default {
+    @apply bg-slate-900;
+  }
+
+  .bg-surface {
+    @apply bg-white;
+  }
+  .dark .bg-surface {
+    @apply bg-slate-800;
+  }
+
+  /* Border colors */
+  .border-default {
+    @apply border-slate-200;
+  }
+  .dark .border-default {
+    @apply border-slate-700;
+  }
+
+  /* Input styles */
+  .input-field {
+    @apply bg-white border border-slate-200 text-slate-800;
+  }
+  .dark .input-field {
+    @apply bg-slate-800 border-slate-600 text-slate-100;
+  }
+
+  /* Hover states */
+  .hover-surface {
+    @apply hover:bg-slate-50;
+  }
+  .dark .hover-surface {
+    @apply hover:bg-slate-700;
   }
 }

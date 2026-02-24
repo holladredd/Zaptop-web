@@ -3,22 +3,25 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import Layout from '../../components/Layout';
 import ProtectedRoute from '../../components/ProtectedRoute';
-import { AiOutlineForm, AiOutlineCheckCircle, AiOutlineLeft } from 'react-icons/ai';
+import { AiOutlineForm, AiOutlineCheckCircle, AiOutlineArrowLeft, AiOutlineClock, AiOutlineStar } from 'react-icons/ai';
 import Swal from 'sweetalert2';
 
 const surveyTasks = [
-  { id: 1, title: 'Quick Opinion Poll', description: 'Share your thoughts', points: 200, duration: '2 mins' },
-  { id: 2, title: 'Product Research', description: 'Help improve our services', points: 500, duration: '5 mins' },
-  { id: 3, title: 'User Experience', description: 'Rate your app experience', points: 300, duration: '3 mins' },
+  { id: 1, title: 'Product Feedback', description: 'Share your thoughts on our app', points: 200, duration: '3 mins', difficulty: 'Easy' },
+  { id: 2, title: 'Market Research', description: 'Help us understand your needs', points: 500, duration: '8 mins', difficulty: 'Medium' },
+  { id: 3, title: 'User Experience', description: 'Rate your experience with features', points: 300, duration: '5 mins', difficulty: 'Easy' },
+  { id: 4, title: 'Premium Survey', description: 'Detailed feedback for bonus points', points: 1000, duration: '15 mins', difficulty: 'Hard' },
 ];
 
-const ZapLogo = () => (
-  <div className="flex items-center justify-center">
-    <span className="text-yellow-300 text-xs -mt-1 -mr-0.5">-</span>
-    <span className="text-white text-lg font-bold">Z</span>
-    <span className="text-yellow-300 text-xs -mb-1 -ml-0.5">-</span>
-  </div>
-);
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { staggerChildren: 0.1 } }
+};
+
+const itemVariants = {
+  hidden: { y: 20, opacity: 0 },
+  visible: { y: 0, opacity: 1 }
+};
 
 export default function SurveyTasks() {
   const [userPoints, setUserPoints] = useState(0);
@@ -26,10 +29,11 @@ export default function SurveyTasks() {
 
   const handleComplete = async (task) => {
     await Swal.fire({
-      title: 'Completing Survey...',
-      timer: 1500,
+      title: 'Loading Survey...',
+      html: '<div class="flex items-center justify-center"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600"></div></div>',
       showConfirmButton: false,
-      willOpen: () => Swal.showLoading(),
+      allowOutsideClick: false,
+      timer: 1500,
     });
 
     setUserPoints(prev => prev + task.points);
@@ -44,68 +48,105 @@ export default function SurveyTasks() {
     });
   };
 
+  const getDifficultyColor = (difficulty) => {
+    switch(difficulty) {
+      case 'Easy': return 'text-emerald-600 bg-emerald-50';
+      case 'Medium': return 'text-amber-600 bg-amber-50';
+      case 'Hard': return 'text-red-600 bg-red-50';
+      default: return 'text-slate-600 bg-slate-50';
+    }
+  };
+
   return (
     <ProtectedRoute>
-      <Layout>
-        <div className="min-h-screen bg-white pb-20">
-          <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-b-3xl p-5 pt-8">
-            <div className="flex items-center justify-between mb-4">
-              <Link href="/tasks" className="text-white p-2 -ml-2">
-                <AiOutlineLeft size={24} />
-              </Link>
-              <h1 className="text-xl font-bold text-white">Survey Tasks</h1>
-              <div className="flex items-center gap-2 bg-white/10 px-3 py-1 rounded-full">
-                <ZapLogo />
-                <span className="text-white font-bold">{userPoints}</span>
-              </div>
+      <Layout title="Survey Tasks">
+        <motion.div 
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          className="space-y-6"
+        >
+          {/* Header */}
+          <div className="flex items-center gap-4">
+            <Link href="/tasks" className="p-2 bg-white rounded-xl shadow-card hover:shadow-soft transition-shadow">
+              <AiOutlineArrowLeft className="w-6 h-6 text-slate-600" />
+            </Link>
+            <div>
+              <h2 className="text-2xl font-bold text-slate-800">Survey Tasks</h2>
+              <p className="text-slate-500">Share your opinion and earn rewards</p>
             </div>
           </div>
 
-          <div className="px-4 mt-4">
-            <h2 className="font-bold text-lg text-gray-900 mb-4">Available Surveys</h2>
-            <div className="space-y-3">
-              {surveyTasks.map((task) => {
-                const isCompleted = completedTasks.includes(task.id);
-                return (
-                  <motion.div
-                    key={task.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className={`bg-gray-100 rounded-xl p-4 ${isCompleted ? 'opacity-70' : ''}`}
-                  >
-                    <div className="flex items-center">
-                      <div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center">
-                        <AiOutlineForm className="w-6 h-6 text-white" />
+          {/* Stats */}
+          <div className="flex gap-4">
+            <div className="flex-1 bg-white rounded-xl shadow-card p-4">
+              <p className="text-sm text-slate-500 mb-1">Points Earned</p>
+              <p className="text-2xl font-bold text-emerald-600">+{userPoints}</p>
+            </div>
+            <div className="flex-1 bg-white rounded-xl shadow-card p-4">
+              <p className="text-sm text-slate-500 mb-1">Surveys Done</p>
+              <p className="text-2xl font-bold text-primary-600">{completedTasks.length}</p>
+            </div>
+          </div>
+
+          {/* Survey List */}
+          <div className="space-y-4">
+            {surveyTasks.map((task) => {
+              const isCompleted = completedTasks.includes(task.id);
+              return (
+                <motion.div
+                  key={task.id}
+                  variants={itemVariants}
+                  className={`bg-white rounded-xl shadow-card p-6 hover:shadow-soft transition-all ${
+                    isCompleted ? 'opacity-60' : ''
+                  }`}
+                >
+                  <div className="flex flex-col md:flex-row md:items-center gap-4">
+                    <div className="w-14 h-14 bg-emerald-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                      <AiOutlineForm className="w-7 h-7 text-emerald-600" />
+                    </div>
+                    
+                    <div className="flex-1">
+                      <div className="flex items-center gap-3 mb-1">
+                        <h3 className="font-semibold text-slate-800 text-lg">{task.title}</h3>
+                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${getDifficultyColor(task.difficulty)}`}>
+                          {task.difficulty}
+                        </span>
                       </div>
-                      <div className="ml-4 flex-1">
-                        <h3 className="font-bold text-gray-900">{task.title}</h3>
-                        <p className="text-gray-500 text-sm">{task.description}</p>
-                      </div>
-                      <div className="text-right">
-                        <p className="font-bold text-green-600">+{task.points}</p>
-                        <p className="text-xs text-gray-400">{task.duration}</p>
+                      <p className="text-slate-500 mb-3">{task.description}</p>
+                      <div className="flex items-center gap-4 text-sm text-slate-400">
+                        <span className="flex items-center gap-1">
+                          <AiOutlineClock className="w-4 h-4" />
+                          {task.duration}
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <AiOutlineStar className="w-4 h-4" />
+                          {task.points} points
+                        </span>
                       </div>
                     </div>
 
-                    {!isCompleted ? (
-                      <button
-                        onClick={() => handleComplete(task)}
-                        className="w-full mt-4 bg-green-500 text-white py-3 rounded-xl font-medium hover:bg-green-600 transition-colors"
-                      >
-                        Complete Survey
-                      </button>
-                    ) : (
-                      <div className="flex items-center justify-center gap-2 mt-4 text-green-600">
-                        <AiOutlineCheckCircle className="w-5 h-5" />
-                        <span className="font-medium">Completed</span>
-                      </div>
-                    )}
-                  </motion.div>
-                );
-              })}
-            </div>
+                    <div className="flex items-center gap-3">
+                      {!isCompleted ? (
+                        <button
+                          onClick={() => handleComplete(task)}
+                          className="px-6 py-3 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 transition-colors font-medium"
+                        >
+                          Start Survey
+                        </button>
+                      ) : (
+                        <div className="flex items-center gap-2 text-emerald-600 font-medium px-6 py-3">
+                          <AiOutlineCheckCircle className="w-5 h-5" />
+                          Completed
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </motion.div>
+              );
+            })}
           </div>
-        </div>
+        </motion.div>
       </Layout>
     </ProtectedRoute>
   );

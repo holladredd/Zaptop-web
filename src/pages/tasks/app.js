@@ -3,22 +3,25 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import Layout from '../../components/Layout';
 import ProtectedRoute from '../../components/ProtectedRoute';
-import { AiOutlineMobile, AiOutlineCheckCircle, AiOutlineLeft } from 'react-icons/ai';
+import { AiOutlineMobile, AiOutlineCheckCircle, AiOutlineArrowLeft, AiOutlineDownload, AiOutlineStar } from 'react-icons/ai';
 import Swal from 'sweetalert2';
 
 const appTasks = [
-  { id: 1, title: 'Game Master', description: 'Download and reach level 5', points: 1000 },
-  { id: 2, title: 'Finance Pro', description: 'Complete account setup', points: 800 },
-  { id: 3, title: 'Fitness Tracker', description: 'Track your first workout', points: 600 },
+  { id: 1, title: 'Game Master Pro', description: 'Download and reach level 5 in this exciting strategy game', points: 1000, size: '45MB', rating: 4.5 },
+  { id: 2, title: 'Finance Tracker', description: 'Manage your expenses with this intuitive finance app', points: 800, size: '28MB', rating: 4.8 },
+  { id: 3, title: 'Fitness Coach', description: 'Track workouts and get personalized fitness plans', points: 600, size: '35MB', rating: 4.3 },
+  { id: 4, title: 'Shopping Rewards', description: 'Shop and earn cashback rewards', points: 1500, size: '22MB', rating: 4.6 },
 ];
 
-const ZapLogo = () => (
-  <div className="flex items-center justify-center">
-    <span className="text-yellow-300 text-xs -mt-1 -mr-0.5">-</span>
-    <span className="text-white text-lg font-bold">Z</span>
-    <span className="text-yellow-300 text-xs -mb-1 -ml-0.5">-</span>
-  </div>
-);
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { staggerChildren: 0.1 } }
+};
+
+const itemVariants = {
+  hidden: { y: 20, opacity: 0 },
+  visible: { y: 0, opacity: 1 }
+};
 
 export default function AppTasks() {
   const [userPoints, setUserPoints] = useState(0);
@@ -26,10 +29,12 @@ export default function AppTasks() {
 
   const handleDownload = async (task) => {
     await Swal.fire({
-      title: 'Opening App Store...',
-      timer: 1500,
+      title: 'Downloading App...',
+      html: '<div class="w-full bg-gray-200 rounded-full h-2"><div class="bg-amber-500 h-2 rounded-full" style="width: 0%"></div></div>',
       showConfirmButton: false,
-      willOpen: () => Swal.showLoading(),
+      allowOutsideClick: false,
+      timer: 2000,
+      timerProgressBar: true,
     });
 
     setUserPoints(prev => prev + task.points);
@@ -37,7 +42,7 @@ export default function AppTasks() {
 
     Swal.fire({
       icon: 'success',
-      title: 'Task Completed!',
+      title: 'App Installed!',
       text: `You earned ${task.points} points!`,
       timer: 1500,
       showConfirmButton: false,
@@ -46,65 +51,91 @@ export default function AppTasks() {
 
   return (
     <ProtectedRoute>
-      <Layout>
-        <div className="min-h-screen bg-white pb-20">
-          <div className="bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-b-3xl p-5 pt-8">
-            <div className="flex items-center justify-between mb-4">
-              <Link href="/tasks" className="text-white p-2 -ml-2">
-                <AiOutlineLeft size={24} />
-              </Link>
-              <h1 className="text-xl font-bold text-white">App Tasks</h1>
-              <div className="flex items-center gap-2 bg-white/10 px-3 py-1 rounded-full">
-                <ZapLogo />
-                <span className="text-white font-bold">{userPoints}</span>
-              </div>
+      <Layout title="App Tasks">
+        <motion.div 
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          className="space-y-6"
+        >
+          {/* Header */}
+          <div className="flex items-center gap-4">
+            <Link href="/tasks" className="p-2 bg-white rounded-xl shadow-card hover:shadow-soft transition-shadow">
+              <AiOutlineArrowLeft className="w-6 h-6 text-slate-600" />
+            </Link>
+            <div>
+              <h2 className="text-2xl font-bold text-slate-800">App Tasks</h2>
+              <p className="text-slate-500">Download apps and complete tasks</p>
             </div>
           </div>
 
-          <div className="px-4 mt-4">
-            <h2 className="font-bold text-lg text-gray-900 mb-4">Featured Apps</h2>
-            <div className="space-y-3">
-              {appTasks.map((task) => {
-                const isCompleted = completedTasks.includes(task.id);
-                return (
-                  <motion.div
-                    key={task.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className={`bg-gray-100 rounded-xl p-4 ${isCompleted ? 'opacity-70' : ''}`}
-                  >
-                    <div className="flex items-center">
-                      <div className="w-12 h-12 bg-yellow-500 rounded-xl flex items-center justify-center">
-                        <AiOutlineMobile className="w-6 h-6 text-white" />
-                      </div>
-                      <div className="ml-4 flex-1">
-                        <h3 className="font-bold text-gray-900">{task.title}</h3>
-                        <p className="text-gray-500 text-sm">{task.description}</p>
-                      </div>
-                      <div className="text-right">
-                        <p className="font-bold text-yellow-600">+{task.points}</p>
-                      </div>
+          {/* Stats */}
+          <div className="flex gap-4">
+            <div className="flex-1 bg-white rounded-xl shadow-card p-4">
+              <p className="text-sm text-slate-500 mb-1">Points Earned</p>
+              <p className="text-2xl font-bold text-amber-600">+{userPoints}</p>
+            </div>
+            <div className="flex-1 bg-white rounded-xl shadow-card p-4">
+              <p className="text-sm text-slate-500 mb-1">Apps Installed</p>
+              <p className="text-2xl font-bold text-primary-600">{completedTasks.length}</p>
+            </div>
+          </div>
+
+          {/* App List */}
+          <div className="grid md:grid-cols-2 gap-6">
+            {appTasks.map((task) => {
+              const isCompleted = completedTasks.includes(task.id);
+              return (
+                <motion.div
+                  key={task.id}
+                  variants={itemVariants}
+                  className={`bg-white rounded-xl shadow-card p-6 hover:shadow-soft transition-all ${
+                    isCompleted ? 'opacity-60' : ''
+                  }`}
+                >
+                  <div className="flex gap-4">
+                    <div className="w-16 h-16 bg-amber-100 rounded-2xl flex items-center justify-center flex-shrink-0">
+                      <AiOutlineMobile className="w-8 h-8 text-amber-600" />
                     </div>
-
-                    {!isCompleted ? (
-                      <button
-                        onClick={() => handleDownload(task)}
-                        className="w-full mt-4 bg-yellow-500 text-white py-3 rounded-xl font-medium hover:bg-yellow-600 transition-colors"
-                      >
-                        Download & Earn
-                      </button>
-                    ) : (
-                      <div className="flex items-center justify-center gap-2 mt-4 text-yellow-600">
-                        <AiOutlineCheckCircle className="w-5 h-5" />
-                        <span className="font-medium">Completed</span>
+                    
+                    <div className="flex-1">
+                      <div className="flex items-start justify-between mb-2">
+                        <div>
+                          <h3 className="font-semibold text-slate-800 text-lg">{task.title}</h3>
+                          <div className="flex items-center gap-3 text-sm text-slate-500 mt-1">
+                            <span className="flex items-center gap-1">
+                              <AiOutlineStar className="w-4 h-4 text-amber-500" />
+                              {task.rating}
+                            </span>
+                            <span>{task.size}</span>
+                          </div>
+                        </div>
+                        <span className="text-amber-600 font-bold">+{task.points}</span>
                       </div>
-                    )}
-                  </motion.div>
-                );
-              })}
-            </div>
+                      
+                      <p className="text-slate-500 text-sm mb-4">{task.description}</p>
+                      
+                      {!isCompleted ? (
+                        <button
+                          onClick={() => handleDownload(task)}
+                          className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-amber-500 text-white rounded-xl hover:bg-amber-600 transition-colors font-medium"
+                        >
+                          <AiOutlineDownload className="w-5 h-5" />
+                          Download & Install
+                        </button>
+                      ) : (
+                        <div className="flex items-center justify-center gap-2 text-emerald-600 font-medium py-3 bg-emerald-50 rounded-xl">
+                          <AiOutlineCheckCircle className="w-5 h-5" />
+                          Installed & Completed
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </motion.div>
+              );
+            })}
           </div>
-        </div>
+        </motion.div>
       </Layout>
     </ProtectedRoute>
   );
