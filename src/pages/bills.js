@@ -13,8 +13,8 @@ const billCategories = [
     description: "Pay power bills",
     Icon: AiOutlineBulb,
     color: "bg-amber-500",
-    lightColor: "bg-amber-50",
-    textColor: "text-amber-600",
+    lightColor: "bg-amber-50 dark:bg-amber-900/20",
+    textColor: "text-amber-600 dark:text-amber-400",
   },
   {
     id: 2,
@@ -22,8 +22,8 @@ const billCategories = [
     description: "Broadband bills",
     Icon: BsWifi,
     color: "bg-blue-500",
-    lightColor: "bg-blue-50",
-    textColor: "text-blue-600",
+    lightColor: "bg-blue-50 dark:bg-blue-900/20",
+    textColor: "text-blue-600 dark:text-blue-400",
   },
   {
     id: 3,
@@ -31,8 +31,8 @@ const billCategories = [
     description: "DSTV, GOTV, etc",
     Icon: BsTv,
     color: "bg-purple-500",
-    lightColor: "bg-purple-50",
-    textColor: "text-purple-600",
+    lightColor: "bg-purple-50 dark:bg-purple-900/20",
+    textColor: "text-purple-600 dark:text-purple-400",
   },
   {
     id: 4,
@@ -40,8 +40,8 @@ const billCategories = [
     description: "Card payments",
     Icon: BsCreditCard,
     color: "bg-emerald-500",
-    lightColor: "bg-emerald-50",
-    textColor: "text-emerald-600",
+    lightColor: "bg-emerald-50 dark:bg-emerald-900/20",
+    textColor: "text-emerald-600 dark:text-emerald-400",
   },
 ];
 
@@ -54,8 +54,8 @@ const recentBills = [
     amount: "5,000",
     Icon: AiOutlineBulb,
     color: "bg-amber-500",
-    lightColor: "bg-amber-50",
-    textColor: "text-amber-600",
+    lightColor: "bg-amber-50 dark:bg-amber-900/20",
+    textColor: "text-amber-600 dark:text-amber-400",
   },
   {
     id: 2,
@@ -65,8 +65,8 @@ const recentBills = [
     amount: "12,000",
     Icon: BsWifi,
     color: "bg-blue-500",
-    lightColor: "bg-blue-50",
-    textColor: "text-blue-600",
+    lightColor: "bg-blue-50 dark:bg-blue-900/20",
+    textColor: "text-blue-600 dark:text-blue-400",
   },
   {
     id: 3,
@@ -76,8 +76,8 @@ const recentBills = [
     amount: "21,000",
     Icon: BsTv,
     color: "bg-purple-500",
-    lightColor: "bg-purple-50",
-    textColor: "text-purple-600",
+    lightColor: "bg-purple-50 dark:bg-purple-900/20",
+    textColor: "text-purple-600 dark:text-purple-400",
   },
 ];
 
@@ -126,7 +126,7 @@ export default function Bills() {
         >
           {/* Categories Grid */}
           <div>
-            <h3 className="text-lg font-semibold text-slate-800 mb-4">
+            <h3 className="text-lg font-semibold text-slate-800 dark:text-white mb-4">
               Bill Categories
             </h3>
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
@@ -135,7 +135,7 @@ export default function Bills() {
                   key={category.id}
                   variants={itemVariants}
                   onClick={() => setSelectedCategory(category.id)}
-                  className={`group bg-white rounded-xl p-6 shadow-card hover:shadow-soft transition-all text-left ${
+                  className={`group bg-white dark:bg-slate-800 rounded-xl p-6 shadow-card dark:shadow-none dark:border dark:border-slate-700 hover:shadow-soft transition-all text-left ${
                     selectedCategory === category.id
                       ? "ring-2 ring-primary-500"
                       : ""
@@ -148,10 +148,10 @@ export default function Bills() {
                       className={`w-6 h-6 ${category.textColor}`}
                     />
                   </div>
-                  <h4 className="font-semibold text-slate-800 mb-1">
+                  <h4 className="font-semibold text-slate-800 dark:text-white mb-1">
                     {category.title}
                   </h4>
-                  <p className="text-sm text-slate-500">
+                  <p className="text-sm text-slate-500 dark:text-slate-400">
                     {category.description}
                   </p>
                 </motion.button>
@@ -162,13 +162,13 @@ export default function Bills() {
           {/* Recent Bills */}
           <motion.div
             variants={itemVariants}
-            className="bg-white rounded-xl shadow-card p-6"
+            className="bg-white dark:bg-slate-800 rounded-xl shadow-card dark:shadow-none dark:border dark:border-slate-700 p-6"
           >
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-lg font-semibold text-slate-800">
+              <h3 className="text-lg font-semibold text-slate-800 dark:text-white">
                 Recent Bills
               </h3>
-              <button className="text-primary-600 hover:text-primary-700 text-sm font-medium">
+              <button className="text-primary-600 dark:text-primary-400 hover:text-primary-700 text-sm font-medium">
                 View All
               </button>
             </div>
@@ -177,7 +177,7 @@ export default function Bills() {
               {recentBills.map((bill) => (
                 <div
                   key={bill.id}
-                  className="flex items-center gap-4 p-4 rounded-xl hover:bg-slate-50 transition-colors border border-slate-100"
+                  className="flex items-center gap-4 p-4 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors border border-slate-100 dark:border-slate-700"
                 >
                   <div
                     className={`w-12 h-12 ${bill.lightColor} rounded-xl flex items-center justify-center`}
@@ -185,18 +185,20 @@ export default function Bills() {
                     <bill.Icon className={`w-6 h-6 ${bill.textColor}`} />
                   </div>
                   <div className="flex-1">
-                    <h4 className="font-semibold text-slate-800">
+                    <h4 className="font-semibold text-slate-800 dark:text-white">
                       {bill.title}
                     </h4>
-                    <p className="text-sm text-slate-500">
+                    <p className="text-sm text-slate-500 dark:text-slate-400">
                       {bill.provider} • {bill.date}
                     </p>
                   </div>
                   <div className="text-right">
-                    <p className="font-bold text-slate-800">₦{bill.amount}</p>
+                    <p className="font-bold text-slate-800 dark:text-white">
+                      ₦{bill.amount}
+                    </p>
                     <button
                       onClick={() => handlePayBill(bill)}
-                      className="text-sm text-primary-600 hover:text-primary-700 font-medium mt-1"
+                      className="text-sm text-primary-600 dark:text-primary-400 hover:text-primary-700 font-medium mt-1"
                     >
                       Pay Now
                     </button>
